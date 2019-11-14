@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">SmashEditor</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string-array name="typeCard">
+        <item>smasheur</item>
+        <item>magie</item>
+        <item>piege</item>
+        <item>super-smasheur</item>
+    </string-array>
+</resources>

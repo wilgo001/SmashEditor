@@ -186,7 +186,7 @@ public class CreateCardActivity extends AppCompatActivity {
                         defense.getText().toString(),
                         groupe.getText().toString()
                 );
-                databaseReference.child("cartes").setValue(carte, new DatabaseReference.CompletionListener() {
+                databaseReference.child("cartes").push().setValue(carte, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                         Toast.makeText(CreateCardActivity.this, "card added.", Toast.LENGTH_SHORT).show();

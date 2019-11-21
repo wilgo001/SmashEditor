@@ -1,5 +1,7 @@
 package com.example.smasheditor;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -14,10 +16,15 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Gallery;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -28,10 +35,16 @@ public class CreateCardActivity extends AppCompatActivity {
     public static final int CAMERA = 1;
     Spinner cardType;
     Button choosePicture;
-    EditText nom, description;
+    ImageButton addButton;
+    EditText nom, description, proba;
     LinearLayout linearLayout;
     String[] typeList;
     ImageView imageView;
+    int minView;
+    Carte carte;
+
+    FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference databaseReference = database.getReference();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,15 +54,18 @@ public class CreateCardActivity extends AppCompatActivity {
         cardType = (Spinner) findViewById(R.id.cardType);
         linearLayout = (LinearLayout) findViewById(R.id.linearLayout);
         choosePicture = (Button) findViewById(R.id.selectImage);
+        addButton = (ImageButton) findViewById(R.id.addButton);
         nom = (EditText) findViewById(R.id.cardName);
         description = (EditText) findViewById(R.id.description);
+        proba = (EditText) findViewById(R.id.proba);
         imageView = (ImageView) findViewById(R.id.imageView);
         typeList = getResources().getStringArray(R.array.typeCard);
+        minView = linearLayout.getChildCount();
 
         cardType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                deleteTooManyEdit();
+                linearLayout.removeViews(minView, linearLayout.getChildCount()-minView);
                 if (parent.getItemAtPosition(position).toString().equals("smasheur"))
                     addAttAndDef();
                 else if (parent.getItemAtPosition(position).toString().equals("smasheur")) {
@@ -60,7 +76,12 @@ public class CreateCardActivity extends AppCompatActivity {
 
             @Override
             public void onNothingSelected(AdapterView<?> parent) {
-
+                addButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(CreateCardActivity.this, "Remplir tout les champs", Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
 
@@ -143,17 +164,38 @@ public class CreateCardActivity extends AppCompatActivity {
         return "";
     }
 
-
-    private void deleteTooManyEdit() {
-
-    }
-
     private void addAttAndDef() {
-        EditText attack = new EditText(this);
+        final EditText attack = new EditText(this);
         attack.setHint("val Attaque");
-        EditText defense = new EditText(this);
+        final EditText defense = new EditText(this);
+        final EditText groupe = new EditText(this);
+        groupe.setHint("groupe");
         defense.setHint("val Defense");
         linearLayout.addView(attack);
         linearLayout.addView(defense);
+        linearLayout.addView(groupe);
+
+        addButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                carte = new SmasheurCarte(
+                        nom.getText().toString(),
+                        proba.getText().toString(),
+                        description.getText().toString(),
+                        attack.getText().toString(),
+                        defense.getText().toString(),
+                        groupe.getText().toString()
+                );
+                databaseReference.child("cartes").setValue(carte, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                        Toast.makeText(CreateCardActivity.this, "card added.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            }
+        });
+
+
     }
 }

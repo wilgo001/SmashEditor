@@ -149,10 +149,9 @@ public class CreateCardActivity extends AppCompatActivity {
         }
         if (requestCode == GALLERY) {
             if (data != null) {
-                Uri contentURI = data.getData();
+                file = data.getData();
                 try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), contentURI);
-                    Toast.makeText(CreateCardActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), file);
                     imageView.setImageBitmap(bitmap);
 
                 } catch (IOException e) {
@@ -169,9 +168,9 @@ public class CreateCardActivity extends AppCompatActivity {
         }
     }
 
-    private void saveImage() {
+    private void saveImage(String cle) {
 
-        StorageReference riversRef = storageRef.child("cartes").child("images/"+file.getLastPathSegment());
+        StorageReference riversRef = storageRef.child("cartes" + cle + "/" + file.getLastPathSegment());
         uploadTask = riversRef.putFile(file);
 
 // Register observers to listen for when the download is done or if it fails
@@ -214,17 +213,18 @@ public class CreateCardActivity extends AppCompatActivity {
                 ChildEventListener listener = new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        saveImage();
+                        saveImage(dataSnapshot.getKey());
+                        Toast.makeText(CreateCardActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
+
                     }
 
                     @Override
                     public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                        saveImage(dataSnapshot.getKey());
                     }
 
                     @Override
                     public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
                     }
 
                     @Override

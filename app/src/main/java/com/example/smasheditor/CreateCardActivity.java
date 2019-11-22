@@ -29,6 +29,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -169,8 +170,7 @@ public class CreateCardActivity extends AppCompatActivity {
     }
 
     private void saveImage(String cle) {
-
-        StorageReference riversRef = storageRef.child("cartes" + cle + "/" + file.getLastPathSegment());
+        StorageReference riversRef = storageRef.child("cartes/" + cle + "/" + file.getLastPathSegment());
         uploadTask = riversRef.putFile(file);
 
 // Register observers to listen for when the download is done or if it fails
@@ -210,26 +210,11 @@ public class CreateCardActivity extends AppCompatActivity {
                         defense.getText().toString(),
                         groupe.getText().toString()
                 );
-                ChildEventListener listener = new ChildEventListener() {
+                ValueEventListener listener = new ValueEventListener() {
                     @Override
-                    public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                         saveImage(dataSnapshot.getKey());
-                        Toast.makeText(CreateCardActivity.this, "Image Saved!", Toast.LENGTH_SHORT).show();
-
-                    }
-
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-                        saveImage(dataSnapshot.getKey());
-                    }
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-                    }
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
+                        Toast.makeText(CreateCardActivity.this, "Carte sauvée", Toast.LENGTH_SHORT).show();
                     }
 
                     @Override
@@ -237,8 +222,10 @@ public class CreateCardActivity extends AppCompatActivity {
 
                     }
                 };
-                databaseReference.addChildEventListener(listener);
-                databaseReference.child("cartes").push().setValue(carte, new DatabaseReference.CompletionListener() {
+
+                DatabaseReference refCartes = databaseReference.child("cartes").push();
+                refCartes.addValueEventListener(listener);
+                refCartes.setValue(carte, new DatabaseReference.CompletionListener() {
                     @Override
                     public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
                         Toast.makeText(CreateCardActivity.this, "card added.", Toast.LENGTH_SHORT).show();

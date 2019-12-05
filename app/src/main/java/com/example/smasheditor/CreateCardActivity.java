@@ -5,6 +5,7 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -52,6 +53,7 @@ public class CreateCardActivity extends AppCompatActivity {
     Carte carte;
     Uri file;
     UploadTask uploadTask;
+    Intent CropIntent;
 
     FirebaseDatabase database = FirebaseDatabase.getInstance();
     DatabaseReference databaseReference = database.getReference();
@@ -152,6 +154,7 @@ public class CreateCardActivity extends AppCompatActivity {
         if (requestCode == GALLERY) {
             if (data != null) {
                 file = data.getData();
+                CropImage();
                 try {
                     Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), file);
                     imageView.setImageBitmap(bitmap);
@@ -242,5 +245,27 @@ public class CreateCardActivity extends AppCompatActivity {
         });
 
 
+    }
+
+    private void CropImage() {
+
+        try{
+            CropIntent = new Intent("com.android.camera.action.CROP");
+            CropIntent.setDataAndType(file,"image/*");
+
+            CropIntent.putExtra("crop","true");
+            CropIntent.putExtra("outputX",180);
+            CropIntent.putExtra("outputY",180);
+            CropIntent.putExtra("aspectX",4);
+            CropIntent.putExtra("aspectY",4);
+            CropIntent.putExtra("scaleUpIfNeeded",true);
+            CropIntent.putExtra("return-data",true);
+
+            startActivityForResult(CropIntent,1);
+        }
+        catch(ActivityNotFoundException ex)
+        {
+
+        }
     }
 }

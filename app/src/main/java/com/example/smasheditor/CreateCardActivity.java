@@ -14,6 +14,7 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -40,10 +41,10 @@ public class CreateCardActivity extends AppCompatActivity {
 
     private static final int GALLERY = 0;
     public static final int CAMERA = 1;
-    Spinner cardType;
+    Spinner cardType, proba;
     Button choosePicture;
     ImageButton addButton;
-    EditText nom, description, proba;
+    EditText nom, description;
     LinearLayout linearLayout;
     String[] typeList;
     ImageView imageView;
@@ -68,7 +69,7 @@ public class CreateCardActivity extends AppCompatActivity {
         addButton = (ImageButton) findViewById(R.id.addButton);
         nom = (EditText) findViewById(R.id.cardName);
         description = (EditText) findViewById(R.id.description);
-        proba = (EditText) findViewById(R.id.proba);
+        proba = (Spinner) findViewById(R.id.proba);
         imageView = (ImageView) findViewById(R.id.imageView);
         typeList = getResources().getStringArray(R.array.typeCard);
         minView = linearLayout.getChildCount();
@@ -192,23 +193,28 @@ public class CreateCardActivity extends AppCompatActivity {
         final EditText attack = new EditText(this);
         attack.setHint("val Attaque");
         final EditText defense = new EditText(this);
-        final EditText groupe = new EditText(this);
-        groupe.setHint("groupe");
+        final Spinner groupe1 = new Spinner(this);
+        final Spinner groupe2 = new Spinner(this);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.groupeSmasheur, R.layout.support_simple_spinner_dropdown_item);
+        groupe1.setAdapter(adapter);
+        groupe2.setAdapter(adapter);
         defense.setHint("val Defense");
         linearLayout.addView(attack);
         linearLayout.addView(defense);
-        linearLayout.addView(groupe);
+        linearLayout.addView(groupe1);
+        linearLayout.addView(groupe2);
 
         addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 carte = new SmasheurCarte(
                         nom.getText().toString(),
-                        proba.getText().toString(),
+                        proba.getSelectedItem().toString(),
                         description.getText().toString(),
                         attack.getText().toString(),
                         defense.getText().toString(),
-                        groupe.getText().toString()
+                        groupe1.getSelectedItem().toString(),
+                        groupe2.getSelectedItem().toString()
                 );
                 ValueEventListener listener = new ValueEventListener() {
                     @Override

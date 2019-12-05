@@ -9,4 +9,23 @@
         <item>piege</item>
         <item>super-smasheur</item>
     </string-array>
+    <string-array name="probaCard">
+        <item>N</item>
+        <item>R</item>
+        <item>SR</item>
+        <item>SSR</item>
+        <item>LR</item>
+    </string-array>
+    <string-array name="groupeSmasheur">
+        <item>Red-Uni-Team</item>
+        <item>Professeur</item>
+        <item>NullPointerException</item>
+        <item>N2C Corp</item>
+        <item>Chef Crew</item>
+        <item>Cynthia Crew</item>
+        <item>NTCH Gang</item>
+        <item>CV vidéo doesn\'t exist</item>
+        <item>ADIIL</item>
+        <item>Voteddy</item>
+    </string-array>
 </resources>

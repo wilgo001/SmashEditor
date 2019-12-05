@@ -35,13 +35,11 @@
                 android:hint="nom"
                 android:inputType="textPersonName" />
 
-            <EditText
+            <Spinner
                 android:id="@+id/proba"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:ems="10"
-                android:hint="probabilité"
-                android:inputType="textPersonName" />
+                android:entries="@array/probaCard" />
 
             <EditText
                 android:id="@+id/description"

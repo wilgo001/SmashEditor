@@ -59,6 +59,7 @@ public class CreateCardActivity extends AppCompatActivity {
     DatabaseReference databaseReference = database.getReference();
     FirebaseStorage storage = FirebaseStorage.getInstance();
     StorageReference storageRef = storage.getReference();
+    private View.OnClickListener listener1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,8 +83,10 @@ public class CreateCardActivity extends AppCompatActivity {
                 linearLayout.removeViews(minView, linearLayout.getChildCount()-minView);
                 if (parent.getItemAtPosition(position).toString().equals("smasheur"))
                     addAttAndDef();
-                else if (parent.getItemAtPosition(position).toString().equals("smasheur")) {
-                    addAttAndDef();
+                else if (parent.getItemAtPosition(position).toString().equals("super-smasheur")) {
+                    addSacrifice();
+
+
 
                 }
             }
@@ -107,6 +110,59 @@ public class CreateCardActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void addSacrifice() {
+        final EditText attack = new EditText(this);
+        attack.setHint("val Attaque");
+        final EditText defense = new EditText(this);
+        final Spinner groupe1 = new Spinner(this);
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.groupeSmasheur, R.layout.support_simple_spinner_dropdown_item);
+        groupe1.setAdapter(adapter);
+        defense.setHint("val Defense");
+        linearLayout.addView(attack);
+        linearLayout.addView(defense);
+        linearLayout.addView(groupe1);
+        final EditText sacrifice = new EditText(this);
+        sacrifice.setHint("sacrifice ");
+        this.linearLayout.addView(sacrifice);
+        View.OnClickListener listener2 = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                carte = new SuperSmasheurCard(
+                        nom.getText().toString(),
+                        proba.getSelectedItem().toString(),
+                        description.getText().toString(),
+                        attack.getText().toString(),
+                        defense.getText().toString(),
+                        groupe1.getSelectedItem().toString(),
+                        sacrifice.getText().toString()
+                );
+                ValueEventListener listener = new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        saveImage(dataSnapshot.getKey());
+                        Toast.makeText(CreateCardActivity.this, "Carte sauvée", Toast.LENGTH_SHORT).show();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                    }
+                };
+
+                DatabaseReference refCartes = databaseReference.child("cartes").push();
+                refCartes.addValueEventListener(listener);
+                refCartes.setValue(carte, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(@Nullable DatabaseError databaseError, @NonNull DatabaseReference databaseReference) {
+                        Toast.makeText(CreateCardActivity.this, "card added.", Toast.LENGTH_SHORT).show();
+                    }
+                });
+
+            }
+        };
+        addButton.setOnClickListener(listener2);
     }
 
     private void showPictureDialog(){
@@ -207,7 +263,7 @@ public class CreateCardActivity extends AppCompatActivity {
         linearLayout.addView(groupe1);
         linearLayout.addView(groupe2);
 
-        addButton.setOnClickListener(new View.OnClickListener() {
+        listener1 = new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 carte = new SmasheurCarte(
@@ -240,9 +296,10 @@ public class CreateCardActivity extends AppCompatActivity {
                         Toast.makeText(CreateCardActivity.this, "card added.", Toast.LENGTH_SHORT).show();
                     }
                 });
-
             }
-        });
+        };
+        addButton.setOnClickListener(listener1);
+
 
 
     }

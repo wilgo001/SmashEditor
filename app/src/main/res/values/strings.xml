@@ -17,6 +17,7 @@
         <item>LR</item>
     </string-array>
     <string-array name="groupeSmasheur">
+        <item>-</item>
         <item>Red-Uni-Team</item>
         <item>Professeur</item>
         <item>NullPointerException</item>
